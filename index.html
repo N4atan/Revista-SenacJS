@@ -1,20 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+    <title>Revista Senac-JS</title>
+
+
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+
+            font-family: "Source Code Pro", monospace;
+        }
+
+        :root {
+            --senac-yellow: #ffd43b;
+        }
+
+        body {
+            width: 100dvw;
+            height: 100dvh;
+
+            background-color: rgb(255, 255, 255);
+        }
+
+        header {
+            height: 10%;
+
+            padding: 10px 20px;
+
+            backdrop-filter: blur(2px);
+
+            border-bottom: 1px solid rgb(222, 222, 222);
+        }
+
+        header img {
+            height: 100%;   /* faz a imagem ocupar a altura do header */
+            object-fit: contain; /* garante que não deforme */
+        }
+
+        main {
+            padding-top: 20px;
+        }
+
+        main h1 {
+            font-size: 26px;
+        }
+
+        main h2 {
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        .card-area {
+            display: flex;
+            flex: 1;
+            justify-content: left;
+            gap: 25px;
+
+            margin-top: 1rem;
+        }
+
+        .card {
+            width: 200px;
+            height: 250px;
+
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            border-radius: 10px;
+            background: #fff;
+
+            outline: none;
+
+            /* sombra sutil */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            transition: 0.5s ease;
+        }
+
+        /* efeito no hover */
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        /* área da imagem */
+        .card-div-img {
+            width: 100%;
+            height: 150px;
+
+            background-color: rgb(203, 203, 203);
+
+            border-radius: 8px;
+            overflow: hidden; /* evita que a imagem ultrapasse */
+        }
+
+        .card-div-img img {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+        }
+
+        .card h1 {
+            margin: 0;
+
+            font-size: 20px;
+            font-weight: 400;
+            color: #333;
         }
     </style>
-<body style="height: 100dvh; display: flex; align-items: center; justify-content: center;">
-    <a href="visualizacao.html">Voltar</a>
+</head>
+<body>
+    <header>
+        <img src="assets/img/Senac-02.png" alt="Logo Senac" >
+    </header>
 
-    <iframe src="assets/Revista Senac.js vol01de2025.pdf" width="80%" height="100%" allowfullscreen="true" style="border: none;" ></iframe>
+    <main>
+        <h1>Bem-Vindo a Revista Senac-JS!</h1>
+        <h2>Abaixo, confira nossos artigos e novidades!</h2>
+
+        <div class="card-area">
+            <div class="card">
+                <div class="card-div-img">
+                    <img src="assets/img/vol01de2025.png" alt="">
+                </div>
+
+                <h1>Volume 1</h1>
+            </div>
+            <div class="card">
+                <div class="card-div-img">
+                    <img src="assets/img/vol01de2025.png" alt="">
+                </div>
+
+                <h1>Volume 1</h1>
+            </div>
+            <div class="card">
+                <div class="card-div-img">
+                    <img src="assets/img/vol01de2025.png" alt="">
+                </div>
+
+                <h1>Volume 1</h1>
+            </div>
+        </div>
+    </main>
+
+
+    <script src="https://kit.fontawesome.com/30f143b5e5.js" crossorigin="anonymous"></script>
 </body>
 </html>
