@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revista Senac-JS</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Adicionando Volume</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="inputDrive" class="form-label">Link do Drive:</label>
+                        <input type="text" class="form-control" id="inputDrive" placeholder="Insira o link do Google Drive">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputTitle" class="form-label">Título do Volume:</label>
+                        <input type="text" class="form-control" id="inputTitle" placeholder="Insira o título do volume">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputUsername" class="form-label">Quem está adicionando:</label>
+                        <input type="text" class="form-control" id="inputUsername" placeholder="Seu nome">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputDescription" class="form-label">Adicione uma breve descrição:</label>
+                        <textarea class="form-control" id="inputDescription" rows="3" placeholder="Insira uma descrição"></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btn-salvar">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="container-actiongroup" class="container mt-3 mb-5">
+        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            Adicionar
+        </button>
+    </div>
+
+    <div id="container-cards" class="container d-flex justify-content-evenly flex-wrap gap-5">
+
+        <div class="card mb-3 " style="max-width: 450px; max-height: 250px;">
+            <div class="row g-0 flex-grow-1">
+
+                <div class="col-md-4">
+                    <img src="assets/img/vol01de2025.png" class="img-fluid h-100 rounded-start object-fit-contain"
+                        alt="..." style="height: 100%;">
+                </div>
+
+                <div class="col-md-8">
+                    <div class="card-body h-100 d-flex flex-column">
+                        <h5 class="card-title">Volume Fictício 2025</h5>
+                        <p class="card-text">
+                            Este é um volume de exemplo para a sua revista. Ele contém artigos sobre tecnologia, design e inovação.
+                        </p>
+                        <p class="card-text mt-auto">
+                            <small class="text-body-secondary">Adicionado por: Fulaninho de Tal</small>
+                        </p>
+
+                        <a href="#" class="btn btn-outline-primary">Ler Revista</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore-compat.js"></script>
+
+    <script type="module">
+        // 1. Correção nas importações: Usando a abordagem modular e removendo 'db' do import
+        //    Usando a versão mais recente (ex: 10.x.x) e caminhos corretos para módulos.
+        //    Verifique no console do Firebase (Configurações do Projeto -> Seus Apps -> SDK setup)
+        //    qual a versão mais recente e os paths exatos se quiser fixar uma.
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+        // Configuração do seu projeto Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD699BCQOA-Q1_UHqIHhMl12o-zSvKIwm0",
+            authDomain: "project-revistasenacjs.firebaseapp.com",
+            projectId: "project-revistasenacjs",
+            storageBucket: "project-revistasenacjs.firebasestorage.app",
+            messagingSenderId: "232742437212",
+            appId: "1:232742437212:web:a87950fe3a8da7b9a7c199",
+            measurementId: "G-GYSVFSPYB7"
+        };
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        // 2. Correção: 'db' não é redeclarado. Apenas obtém a instância.
+        const db = getFirestore(app);
+
+        const volumesCollection = collection(db, "volumes");
+        const containerCards = document.getElementById("container-cards");
+
+        // 3. Correção: Criando uma função para gerar o elemento do cartão
+        function createCardElement(data) {
+            const card = document.createElement("div");
+            card.className = "card mb-3";
+            card.style.maxWidth = "450px";
+            card.style.maxHeight = "250px";
+            card.innerHTML = `
+                <div class="row g-0 flex-grow-1">
+                    <div class="col-md-4">
+                        <img src="https://placehold.co/400x600/png" class="img-fluid h-100 rounded-start object-fit-contain" alt="Capa da revista">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body h-100 d-flex flex-column">
+                            <h5 class="card-title">${data.title}</h5>
+                            <p class="card-text">${data.description}</p>
+                            <p class="card-text mt-auto">
+                                <small class="text-body-secondary">${new Date(data.createdAt)}</small>
+                            </p>
+                            <a href="${data.drive}" target="_blank" class="btn btn-outline-primary">Ler Revista</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Adiciona um listener para o botão "Salvar"
+        document.getElementById("btn-salvar").addEventListener("click", async () => {
+            let drive = document.getElementById("inputDrive").value;
+            let title = document.getElementById("inputTitle").value;
+            let user_name = document.getElementById("inputUsername").value;
+            let description = document.getElementById("inputDescription").value;
+            let createdAt = new Date(); // Objeto Date para o timestamp
+
+            // Validação simples para garantir que os campos não estejam vazios
+            if (!drive || !title || !user_name || !description) {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+            
+            // Cria um objeto com os dados para salvar
+            const volumeData = {
+                drive,
+                title,
+                user_name,
+                description,
+                createdAt // Salva o objeto Date diretamente no Firestore
+            };
+
+            // 4. Correção: Usando Date.now() para um timestamp único para o ID do documento
+            const newDocId = `volume_${Date.now()}`; 
+
+            try {
+                // Salva os dados no Firestore usando await
+                await setDoc(doc(db, "volumes", newDocId), volumeData);
+                alert("Volume adicionado com sucesso!");
+
+                // Limpa os campos do formulário
+                document.getElementById("inputDrive").value = '';
+                document.getElementById("inputTitle").value = '';
+                document.getElementById("inputUsername").value = '';
+                document.getElementById("inputDescription").value = '';
+
+                // Fecha o modal após salvar
+                // Garante que o Bootstrap JS está carregado antes deste script.
+                const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdrop'));
+                if (modal) { // Verifica se o modal foi encontrado
+                    modal.hide();
+                } else {
+                    // Se o modal não foi instanciado, pode ser necessário inicializá-lo primeiro
+                    // Ex: const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop')); myModal.hide();
+                    console.warn("Modal Bootstrap não encontrado. Certifique-se de que o JS do Bootstrap está carregado.");
+                }
+
+            } catch (e) {
+                console.error("Erro ao adicionar documento: ", e);
+                alert("Ocorreu um erro ao salvar o volume.");
+            }
+        });
+
+        // 5. Correção: Usando 'volumesCollection' (ou recriando 'volumesCol') para consistência
+        // E adicionando a lógica para renderizar os cartões
+        const volumesCol = collection(db, 'volumes'); // Consistência: escutando 'volumes'
+
+        // Opcional: Adicionar um query para ordenar os resultados, por exemplo, por data de criação
+        const q = query(volumesCol, orderBy("createdAt", "desc"));
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            // Limpa o container antes de adicionar os novos cartões para evitar duplicatas
+            containerCards.innerHTML = ''; 
+            
+            snapshot.docs.forEach(documentSnapshot => {
+                const data = documentSnapshot.data();
+                const cardElement = createCardElement(data); // Chama a função corrigida
+                containerCards.appendChild(cardElement); // Adiciona o cartão ao container
+            });
+            console.log("Dados atualizados e UI renderizada.");
+        }, (error) => {
+            console.error("Erro ao escutar volumes:", error);
+        });
+
+
+        // Para parar de escutar por atualizações (útil se o componente for destruído):
+        // unsubscribe();
+    </script>
+</body>
+
+</html>
